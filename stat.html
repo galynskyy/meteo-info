@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="ru">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>Метеостанция Владимира Галынского | Дом в Крупской</title>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+		<link rel="stylesheet" href="../css/style.css">
+		<link rel="shortcut icon" href="../favicon.ico">
+		<!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+			<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+		<![endif]-->
+	</head>
+	<body>
+		<div class="container">
+		<!-- Modal -->
+			<!-- Change Location -->
+				<div class="modal fade" id="modal_change" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+								<h4 class="modal-title" id="myModalLabel">Выбор метеостанции</h4>
+							</div>
+							<div class="modal-body">
+								<div class="progress">
+									<div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+										Подождите немного. Идет изменение станции...
+									</div>
+								</div>
+								<div class="alert alert-success" role="alert">
+									<strong>
+										Метеостанция была успешно изменена на <span id="change_station"></span>.
+									</strong>
+								</div>
+								<div class="alert alert-warning" role="alert">
+									<strong>
+										Эта станция сейчас активна. Выберете другую.
+									</strong>
+								</div>
+								<div class="alert alert-danger" role="alert">
+									<strong>
+										Упс. Что то пошло не так. Попробуйте позднее.
+									</strong>
+								</div>
+								<form class="form-horizontal" id="change_form" role="form" action="javascript:void(0);">
+									<div class="form-group">
+										<label for="inputEmail3" class="col-sm-2 control-label">Станция:</label>
+										<div class="col-sm-10">
+											<select id="station_list" class="form-control">
+												<option value="home_zorge">Дом #1 на Зорге</option>
+												<option value="willage_krupski">Дача #1 в Крупском</option>
+											</select>
+										</div>
+									</div>
+									<button type="submit" class="btn btn-primary btn-block">Изменить</button>
+								</form>
+							</div>
+						</div>
+					</div>
+				</div>
+			<!-- /Change Location -->
+			<!-- Info Location -->
+				<div class="modal fade" id="modal_info" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+								<h4 class="modal-title" id="myModalLabel">Информация о метеостанции</h4>
+							</div>
+							<div class="modal-body">
+								<form class="form-horizontal" role="form">
+									<div class="form-group">
+										<label for="inputEmail3" class="col-sm-3 control-label">Название:</label>
+										<div class="col-sm-9">
+											<p class="form-control-static" id="station_name"></p>
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="inputEmail3" class="col-sm-3 control-label">Место:</label>
+										<div class="col-sm-9">
+											<p class="form-control-static" id="station_geo"></p>
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="inputEmail3" class="col-sm-3 control-label">Датчики:</label>
+										<div class="col-sm-9">
+											<p class="form-control-static" id="station_sensor"></p>
+										</div>
+									</div>
+								</form>
+							</div>
+						</div>
+					</div>
+				</div>
+			<!-- /Info Location -->
+		<!-- /Modal -->
+		<!-- Header -->
+			<div class="row" id="header">
+				<div class="col-md-4" id="logo_header">
+					<a href="/"><img src="../img/logo.png"></a>
+				</div>
+				<div class="col-md-4" id="desc_header">
+					<p>Метеостанция на Raspberry PI</p>
+				</div>
+				<div class="col-md-4" id="loc_header">
+					<p>Cтанция: <span id="current_station" data-toggle="modal" data-target="#modal_info">Дом в Крупской</span> (<a data-toggle="modal" data-target="#modal_change">изменить</a>)</p>
+				</div>
+			</div>
+		<!-- Header -->
+		<!-- Menu -->
+			<!--<nav class="navbar navbar-custom" role="navigation">
+				<div class="container-fluid">
+					<div class="navbar-header visible-xs-block">
+						<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+							<span class="sr-only">Переключатель навигации</span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+						</button>
+						<a class="navbar-brand" href="/">Меню</a>
+					</div>
+					<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+						<ul class="nav navbar-nav">
+							<li class="active"><a href="/">Главная</a></li>
+							<li><a href="/period.html">За период</a></li>
+							<li><a href="/stat.html">Статистика</a></li>
+							<li><a href="/about.html">О проекте</a></li>
+						</ul>
+						<ul class="nav navbar-nav navbar-right">
+							<li><a href="https://galynsky.com">Вернуться на главный сайт</a></li>
+						</ul>
+					</div>
+				</div>
+			</nav>-->
+		<!-- /Menu -->
+		<!-- Content -->
+			<!-- New -->
+			<div class="row">
+				<div class="col-md-9 global-content">
+					<h3>Добро пожаловать на сайт метеостанции Владимира Галынского!</h3>
+					<div class="row" id="current">
+						<div class="col-md-4">
+							<div class="panel panel-info">
+								<div class="panel-heading">Температура</div>
+								<div class="panel-body">
+									5 °C
+								</div>
+							</div>
+						</div>
+						<div class="col-md-4">
+							<div class="panel panel-info">
+								<div class="panel-heading">Влажность</div>
+								<div class="panel-body">
+									50 %
+								</div>
+							</div>
+						</div>
+						<div class="col-md-4">
+							<div class="panel panel-info">
+								<div class="panel-heading">Замер</div>
+								<div class="panel-body">
+									55 минут(а) назад
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="panel panel-info" id="testp">
+						<div class="panel-body">
+							Сейчас в Новосибирске <span id="current_city"></span> °C <span id="current_desc"></span>. Завтра будет <span id="tomorrow_city"></span> °C <span id="tomorrow_desc"></span>.
+						</div>
+					</div>
+					<!--<div class="well well-sm" id="current_home">
+						<h4>Коротко о главном:</h4>
+						<p>
+							<strong>Температура:</strong> <span id="current_home_temperature"></span> °C<br>
+							<strong>Влажность:</strong> <span id="current_home_humidity"></span> %<br>
+							<strong>Проверка:</strong> <span id="current_home_date"></span> минут(а)
+						</p>
+					</div>-->
+					<!--<div class="well well-sm" id="weather_city">
+						<h4>Погода в Новосибирске:</h4>
+						<p>
+							<strong>Сейчас:</strong> <span id="current_city"></span> °C <span id="current_desc"></span><br>
+							<strong>На сегодня:</strong> <span id="current_home_humidity"></span> %<br>
+							<strong>Завтра:</strong> <span id="current_home_date"></span> минут(а)
+						</p>
+						<h4>
+							Сейчас в Новосибирске <span id="current_city"></span> °C <span id="current_desc"></span>.
+							Завтра <span id="tomorrow_city"></span> °C <span id="tomorrow_desc"></span>.
+						</h4>
+					</div>-->
+					<!-- Chart -->
+					<div class="row">
+						<div class="col-md-6">
+							<div class="panel panel-info">
+								<div class="panel-body">
+									<h4>Погода сегодня:</h4>
+									<div id="chart_day">
+										<div class="progress">
+											<div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+												Подождите, идет загрузка графика
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-6">
+							<div class="panel panel-info">
+								<div class="panel-body">
+									<h4>Погода сегодня:</h4>
+									<div id="chart_month">
+										<div class="progress">
+											<div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+												Подождите, идет загрузка графика
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- Chart -->
+					<div class="well well-sm" id="main_section">
+						<h4>Ознакомиться с погодой за определенный период можно <a href="../period.html">здесь</a>.</h4>
+					</div>
+				</div>
+				<div class="col-md-3" id="sidebar">
+					<div class="panel panel-default" id="news_sidebar">
+						<div class="panel-heading">Новости</div>
+						<ul class="list-group">
+							<li class="list-group-item"><a href="/news.html#open_site">Мы открылись!</a></li>
+						</ul>
+					</div>
+					<div class="panel panel-default" id="contacts_sidebar">
+						<div class="panel-heading">Контакты</div>
+						<ul class="list-group">
+							<li class="list-group-item">Телефон: +7-913-985-2844</li>
+							<li class="list-group-item"><button class="btn btn-default btn-block" data-toggle="modal" data-target="#modal_feedback"><span class="glyphicon glyphicon-envelope"></span> Написать нам!</button></li>
+							<li class="list-group-item"><button class="btn btn-default btn-block" data-toggle="modal" data-target="#modal_callback"><span class="glyphicon glyphicon-phone-alt"></span> Заказать звонок!</button></li>
+							<li class="list-group-item"><button class="btn btn-default btn-block" data-toggle="modal" data-target="#modal_request"><span class="glyphicon glyphicon-plus"></span> Оставить заявку!</button></li>
+						</ul>
+					</div>
+					<!--<div class="panel panel-default" id="reviews_sidebar">
+						<div class="panel-heading">Отзывы клиентов</div>
+						<ul class="list-group">
+							<li class="list-group-item"><strong>Игорь [02.03.14]</span></strong>: Сотрудники компании выполнили свою работу на высоком уровне <a href="/?page=reviews#1">Читать далее&raquo;</a></li>
+							<li class="list-group-item"><strong>Максим [15.05.14]</strong>: Мы выражаем Вам благодарность за отличную работу и техническую поддержку <a href="/?page=reviews#2">Читать далее&raquo;</a></li>
+							<li class="list-group-item"><strong>Владислав [21.07.14]</strong>: Мы рекомендуем данную компанию как надежного и ответственного партнера <a href="/?page=reviews#3">Читать далее&raquo;</a></li>
+						</ul>
+					</div>-->
+					<div class="panel panel-default">
+						<div class="panel-heading">Мы ВКонтакте!</div>
+						<div class="panel-body">
+							<script type="text/javascript" src="//vk.com/js/api/openapi.js?115"></script>
+							<div id="vk_groups"></div>
+							<script type="text/javascript">
+								VK.Widgets.Group("vk_groups", {mode: 1, width: "230", height: "400", color1: 'FFFFFF', color2: '2B587A', color3: '5B7FA6'}, 80455805);
+							</script>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- /New -->
+			<!--<div class="row">
+				<div class="col-md-12 global-content">
+					
+				</div>
+			</div>
+		<!-- /Content -->
+		<hr>
+		<!-- Footer -->
+			<div id="footer">
+				<p>© Meteo Galynsky 2014</p>
+			</div>
+		<!-- /Footer -->
+		</div>
+		<!-- JS -->
+			<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+			<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+			<script src="../js/main.js"></script>
+			<!-- Charts -->
+				<script src="http://code.highcharts.com/highcharts.js"></script>
+				<script src="http://code.highcharts.com/modules/exporting.js"></script>
+			<!-- /Charts -->
+		<!-- /JS -->
+	</body>
+</html>

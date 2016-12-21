@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ru">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>Метеостанция Владимира Галынского | О проекте</title>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+		<link rel="stylesheet" href="../css/style.css">
+		<link rel="stylesheet" href="../css/animate.css">
+		<link rel="shortcut icon" href="../favicon.ico">
+		<!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+			<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+		<![endif]-->
+	</head>
+	<body>
+		<div class="container">
+		<!-- Modal -->
+			<!-- Change Location -->
+				<div class="modal fade" id="modal_change" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+								<h4 class="modal-title" id="myModalLabel">Выбор метеостанции</h4>
+							</div>
+							<div class="modal-body">
+								<div class="progress">
+									<div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+										Подождите немного. Идет изменение станции...
+									</div>
+								</div>
+								<div class="alert alert-success" role="alert">
+									<strong>
+										Метеостанция была успешно изменена на <span id="change_station"></span>.
+									</strong>
+								</div>
+								<div class="alert alert-warning" role="alert">
+									<strong>
+										Эта станция сейчас активна. Выберете другую.
+									</strong>
+								</div>
+								<div class="alert alert-danger" role="alert">
+									<strong>
+										Упс. Что то пошло не так. Попробуйте позднее.
+									</strong>
+								</div>
+								<form class="form-horizontal" id="change_form" role="form" action="javascript:void(0);">
+									<div class="form-group">
+										<label for="inputEmail3" class="col-sm-2 control-label">Станция:</label>
+										<div class="col-sm-10">
+											<select id="station_list" class="form-control">
+												<option value="home_zorge">Дом #1 на Зорге</option>
+												<option value="willage_krupski">Дача #1 в Крупском</option>
+											</select>
+										</div>
+									</div>
+									<button type="submit" class="btn btn-primary btn-block">Изменить</button>
+								</form>
+							</div>
+						</div>
+					</div>
+				</div>
+			<!-- /Change Location -->
+			<!-- Info Location -->
+				<div class="modal fade" id="modal_info" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+								<h4 class="modal-title" id="myModalLabel">Информация о метеостанции</h4>
+							</div>
+							<div class="modal-body">
+								<form class="form-horizontal" role="form">
+									<div class="form-group">
+										<label for="inputEmail3" class="col-sm-3 control-label">Название:</label>
+										<div class="col-sm-9">
+											<p class="form-control-static" id="station_name"></p>
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="inputEmail3" class="col-sm-3 control-label">Описание:</label>
+										<div class="col-sm-9">
+											<p class="form-control-static" id="station_description"></p>
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="inputEmail3" class="col-sm-3 control-label">Место:</label>
+										<div class="col-sm-9">
+											<p class="form-control-static" id="station_location"></p>
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="inputEmail3" class="col-sm-3 control-label">Дата запуска:</label>
+										<div class="col-sm-9">
+											<p class="form-control-static" id="station_start"></p>
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="inputEmail3" class="col-sm-3 control-label">IP адрес:</label>
+										<div class="col-sm-9">
+											<p class="form-control-static" id="station_ip"></p>
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="inputEmail3" class="col-sm-3 control-label">Статус:</label>
+										<div class="col-sm-9">
+											<p class="form-control-static" id="station_status">Online</p>
+										</div>
+									</div>
+								</form>
+							</div>
+						</div>
+					</div>
+				</div>
+			<!-- /Info Location -->
+		<!-- /Modal -->
+		<!-- Header -->
+			<div class="row" id="header">
+				<div class="col-md-4" id="logo_header">
+					<a href="/"><img src="../img/logo.png"></a>
+				</div>
+				<div class="col-md-4" id="desc_header">
+					<p>Метеостанция на Raspberry PI</p>
+				</div>
+				<div class="col-md-4" id="loc_header">
+					<p>Cтанция: <span id="current_station" data-toggle="modal" data-target="#modal_info"></span> (<a data-toggle="modal" data-target="#modal_change">изменить</a>)</p>
+				</div>
+			</div>
+		<!-- Header -->
+		<!-- Menu -->
+			<nav class="navbar navbar-custom" role="navigation">
+				<div class="container-fluid">
+					<div class="navbar-header visible-xs-block">
+						<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+							<span class="sr-only">Переключатель навигации</span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+						</button>
+						<a class="navbar-brand" href="/">Меню</a>
+					</div>
+					<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+						<ul class="nav navbar-nav">
+							<li><a href="/">Главная</a></li>
+							<li><a href="/period.html">За период</a></li>
+							<li><a href="#">Статистика</a></li>
+							<li class="active"><a href="/about.html">О проекте</a></li>
+						</ul>
+						<ul class="nav navbar-nav navbar-right">
+							<li><a href="https://galynsky.com">Вернуться на главный сайт</a></li>
+						</ul>
+					</div>
+				</div>
+			</nav>
+		<!-- /Menu -->
+		<!-- Content -->
+			<div class="row">
+				<div class="col-md-12 global-content">
+					<h4>О проекте</h4>
+					<p>Это мой сайт посвященный метеостанции на Raspberry PI. Здесь я могу отслеживать температуру в разных местах.</p>
+					<iframe src="https://mapsengine.google.com/map/embed?mid=zeccTasp0XN4.kUVix4ds202g" width="640" height="480" frameborder="0" style="border:0"></iframe>
+				</div>
+			</div>
+		<!-- /Content -->
+		<hr>
+		<!-- Footer -->
+			<div id="footer">
+				<p>© Meteo Galynsky 2014</p>
+			</div>
+		<!-- /Footer -->
+		</div>
+		<!-- JS -->
+			<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+			<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+			<script src="../js/main.js"></script>
+			<!-- Charts -->
+				<script src="http://code.highcharts.com/highcharts.js"></script>
+				<script src="http://code.highcharts.com/modules/exporting.js"></script>
+			<!-- /Charts -->
+		<!-- /JS -->
+	</body>
+</html>
